@@ -1,5 +1,7 @@
 package com.ygc;
 
+import java.util.ArrayList;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Proxy;
@@ -10,6 +12,8 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.opera.OperaDriver;
+import org.openqa.selenium.opera.OperaOptions;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -21,11 +25,16 @@ public class PxyWebDriver {
 		// TODO Auto-generated method stub
 
 		PxyWebDriver pwd = new PxyWebDriver();
-		pwd.test2();
+		String host = "183.88.175.87";
+		String port = "8080";
+		
+//		pwd.YChrome(host,port);
+		pwd.YGecko(host,port);
+//		pwd.YOpera(host,port);
 	}
 	
 	@SuppressWarnings("deprecation")
-	public void test() {
+	public void YChrome(String host, String port) {
 		String exePath = "C:\\workspace\\selenium\\FirstPj\\exe\\chromedriver_win32\\chromedriver.exe";
 		System.setProperty("webdriver.chrome.driver", exePath);
 		
@@ -36,9 +45,6 @@ public class PxyWebDriver {
 ////		    chromeOptions.setBinary("/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary");
 //		    chromeOptions.addArguments("headless");
 //		    driver = new ChromeDriver(chromeOptions);
-		    
-			String host = "218.239.244.15";
-			String port = "80";
 
 			ChromeOptions options = new ChromeOptions();
 			options.addArguments("--proxy-server=\"socks5://" + host + ":" + port+"\"");
@@ -55,23 +61,21 @@ public class PxyWebDriver {
 			e.printStackTrace();
 		}finally {
 			// Close the driver
-			driver.quit();
+//			driver.quit();
 
 		}
     }		
 
-	
-	public void test2() {
+	public void YGecko(String host, String port) {
 		String exePath = "C:\\workspace\\selenium\\FirstPj\\exe\\geckodriver-v0.23.0-win64\\geckodriver.exe";
 		System.setProperty("webdriver.gecko.driver", exePath);
 				
 		
-		String host = "218.239.244.15";
-		String port = "80";
-		
 //		host = "166.88.124.111";
 //		port = "3111";
 		String proxy = host;
+		
+		
 		
 		DesiredCapabilities capability = DesiredCapabilities.chrome();
 		capability.setJavascriptEnabled(true);
@@ -91,4 +95,45 @@ public class PxyWebDriver {
 		
 		
 	}
+
+	public void YOpera(String host, String port) {
+		String exePath = "C:\\workspace\\selenium\\FirstPj\\exe\\operadriver_win64\\operadriver.exe";
+		System.setProperty("webdriver.opera.driver", exePath);
+		
+		try {
+			String proxy = host+":"+port;
+			
+			WebDriver driver = this.getOperaConfigurado(proxy);
+			
+			driver.get("https://www.iplocation.net/find-ip-address");
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		
+	}	
+	
+	@SuppressWarnings("deprecation")
+	private WebDriver getOperaConfigurado(String proxy) {
+		DesiredCapabilities capabilities = DesiredCapabilities.opera();
+
+		ArrayList<String> switches = new ArrayList<String>();
+
+		if (!(proxy.equals(""))) {
+			switches.add("--proxy-server=" + "http://" + proxy);
+		} else {
+			System.out.println("usando proxy!");
+		}
+
+		switches.add("--start-maximized");
+		capabilities.setCapability("opera.switches", switches);
+		capabilities.setBrowserName("opera");
+		capabilities.setJavascriptEnabled(true);
+
+		return new OperaDriver(capabilities);
+	}	
+
+
+
 }
